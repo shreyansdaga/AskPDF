@@ -1,13 +1,11 @@
 from parse import return_chunks
 from sentence_transformers import SentenceTransformer
 import faiss
-
+import pickle
 # import numpy as np || need only for testing purposes
 
 chunks = return_chunks()
-
 model = SentenceTransformer("all-MiniLM-L6-v2")
-
 texts = [chunk.text for chunk in chunks]
 embeddings = model.encode(texts)
 
@@ -24,4 +22,18 @@ dimension = embeddings.shape[1]
 index = faiss.IndexFlatL2(dimension)
 index.add(embeddings)
 
-print(index.ntotal, len(chunks))
+INDEX_PATH = "index.faiss"
+CHUNKS_PATH = "chunks.pkl"
+
+def save_index(index, chunks):
+    faiss.write_index(index, INDEX_PATH)
+    with open(CHUNKS_PATH, "wb") as f:
+        pickle.dump(chunks, f)
+
+def load_index():
+    index = faiss.read_index(INDEX_PATH)
+    with open(CHUNKS_PATH, "rb") as f:
+        chunks = pickle.load(f)
+    return index, chunks
+
+save_index(index, chunks)

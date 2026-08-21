@@ -16,16 +16,13 @@ class Chunk:
     source_file: str
     page_number: int
 
-chunks = []
-chunk_counter = 1
-
 def create_chunks(text):
     return_chunks = []
     final_return_chunks = []
     header_chunks = [c for c in re.split(r'\n#{1,2}\s', text) if c.strip()]
     for chunk in header_chunks: # Split the really long header chunks into paragraph chunks
         if len(chunk) > MAX_CHUNK_SIZE:
-            para_chunks = para_chunks = [p for p in chunk.split('\n\n') if p.strip()]
+            para_chunks = [p for p in chunk.split('\n\n') if p.strip()]
             for i in para_chunks:
                 return_chunks.append(i)
         else:
@@ -41,19 +38,23 @@ def create_chunks(text):
 
     return final_return_chunks
 
-for page_number, page in enumerate(pages, start=1):
-    page_text = page["text"]
-    chunk_text = create_chunks(page_text)
-    for each_chunk_text in chunk_text:
-        id = file_name + "_chunk_" + str(chunk_counter)
-        chunk = Chunk(
-            chunk_id=id,
-            text=each_chunk_text,
-            source_file=file_name,
-            page_number=page_number
-        )
-        chunks.append(chunk)
+def return_chunks():
+    chunks = []
+    chunk_counter = 1
 
-        chunk_counter += 1
+    for page_number, page in enumerate(pages, start=1):
+        page_text = page["text"]
+        chunk_text = create_chunks(page_text)
+        for each_chunk_text in chunk_text:
+            id = file_name + "_chunk_" + str(chunk_counter)
+            chunk = Chunk(
+                chunk_id=id,
+                text=each_chunk_text,
+                source_file=file_name,
+                page_number=page_number
+            )
+            chunks.append(chunk)
 
-print(len(chunks), chunks)
+            chunk_counter += 1
+
+    return chunks

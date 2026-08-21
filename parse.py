@@ -2,9 +2,10 @@ import pymupdf4llm
 import pymupdf
 from dataclasses import dataclass
 import re
+import os
 
 MAX_CHUNK_SIZE = 2000
-file_name = "test_paper.pdf"
+file_name = os.path.join("uploads", "test_paper.pdf")
 # Turning pdf into MD
 doc = pymupdf.open(file_name)
 pages = pymupdf4llm.to_markdown(doc, page_chunks=True)

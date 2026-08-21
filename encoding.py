@@ -1,6 +1,8 @@
 from parse import return_chunks
 from sentence_transformers import SentenceTransformer
-import numpy as np
+import faiss
+
+# import numpy as np || need only for testing purposes
 
 chunks = return_chunks()
 
@@ -18,3 +20,8 @@ print(embeddings[0][:5])   # just look at the first 5 numbers, not to interpret 
 print(np.isnan(embeddings).any())  # should be False — a NaN anywhere means something went wrong during encoding
 """
 
+dimension = embeddings.shape[1]
+index = faiss.IndexFlatL2(dimension)
+index.add(embeddings)
+
+print(index.ntotal, len(chunks))

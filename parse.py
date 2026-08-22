@@ -5,10 +5,7 @@ import re
 import os
 
 MAX_CHUNK_SIZE = 2000
-file_name = os.path.join("uploads", "test_paper.pdf")
 # Turning pdf into MD
-doc = pymupdf.open(file_name)
-pages = pymupdf4llm.to_markdown(doc, page_chunks=True)
 
 @dataclass
 class Chunk:
@@ -39,7 +36,11 @@ def create_chunks(text):
 
     return final_return_chunks
 
-def return_chunks():
+def return_chunks(pdf):
+
+    doc = pymupdf.open(stream=pdf.file, filetype="pdf")
+    pages = pymupdf4llm.to_markdown(doc, page_chunks=True)
+
     chunks = []
     chunk_counter = 1
 
@@ -47,11 +48,11 @@ def return_chunks():
         page_text = page["text"]
         chunk_text = create_chunks(page_text)
         for each_chunk_text in chunk_text:
-            id = file_name + "_chunk_" + str(chunk_counter)
+            id = pdf.name + "_chunk_" + str(chunk_counter)
             chunk = Chunk(
                 chunk_id=id,
                 text=each_chunk_text,
-                source_file=file_name,
+                source_file=pdf.name,
                 page_number=page_number
             )
             chunks.append(chunk)

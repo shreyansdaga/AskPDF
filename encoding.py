@@ -1,13 +1,17 @@
-from parse import return_chunks
 from sentence_transformers import SentenceTransformer
 import faiss
 import pickle
+
 # import numpy as np || need only for testing purposes
 
-chunks = return_chunks()
 model = SentenceTransformer("all-MiniLM-L6-v2")
-texts = [chunk.text for chunk in chunks]
-embeddings = model.encode(texts)
+def encode(chunks):
+    texts = [chunk.text for chunk in chunks]
+    embeddings = model.encode(texts)
+    dimension = embeddings.shape[1]
+    index = faiss.IndexFlatL2(dimension)
+    index.add(embeddings)
+    return index
 
 """
 Testing code to make sure no chuunks were dropped and everything was encoded properly
@@ -17,10 +21,6 @@ print(chunks[0].text[:80])
 print(embeddings[0][:5])   # just look at the first 5 numbers, not to interpret them, just to confirm it's not all zeros / NaN
 print(np.isnan(embeddings).any())  # should be False — a NaN anywhere means something went wrong during encoding
 """
-
-dimension = embeddings.shape[1]
-index = faiss.IndexFlatL2(dimension)
-index.add(embeddings)
 
 INDEX_PATH = "index.faiss"
 CHUNKS_PATH = "chunks.pkl"
@@ -35,5 +35,3 @@ def load_index():
     with open(CHUNKS_PATH, "rb") as f:
         chunks = pickle.load(f)
     return index, chunks
-
-save_index(index, chunks)

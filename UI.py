@@ -26,5 +26,5 @@ if uploaded_file is not None:
             "http://localhost:8000/ask_question",
             json={"question": user_text}
         )
-        answer = response.json()["answer"]
-        st.write("Answer: ", answer)
+        answer = response.json()
+        st.write("Answer: ", answer["answer"])

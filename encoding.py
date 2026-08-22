@@ -13,6 +13,10 @@ def encode(chunks):
     index.add(embeddings)
     return index
 
+def encode_string(string):
+    embedding = model.encode([string])
+    return embedding
+
 """
 Testing code to make sure no chuunks were dropped and everything was encoded properly
 print(len(chunks))          # e.g. 114

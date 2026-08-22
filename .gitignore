@@ -1,2 +1,4 @@
 **/__pycache__/
 **uploads
+chunks.pkl
+index.faiss

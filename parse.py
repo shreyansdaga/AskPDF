@@ -37,8 +37,8 @@ def create_chunks(text):
     return final_return_chunks
 
 def return_chunks(pdf):
-
-    doc = pymupdf.open(stream=pdf.file, filetype="pdf")
+    pdf_bytes = pdf.file.read()
+    doc = pymupdf.open(stream=pdf_bytes, filetype="pdf")
     pages = pymupdf4llm.to_markdown(doc, page_chunks=True)
 
     chunks = []
@@ -48,11 +48,11 @@ def return_chunks(pdf):
         page_text = page["text"]
         chunk_text = create_chunks(page_text)
         for each_chunk_text in chunk_text:
-            id = pdf.name + "_chunk_" + str(chunk_counter)
+            id = pdf.filename + "_chunk_" + str(chunk_counter)
             chunk = Chunk(
                 chunk_id=id,
                 text=each_chunk_text,
-                source_file=pdf.name,
+                source_file=pdf.filename,
                 page_number=page_number
             )
             chunks.append(chunk)
